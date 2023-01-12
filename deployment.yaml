@@ -1,0 +1,111 @@
+## Application Deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-postgres-app
+  labels:
+    app: go-postgres-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-postgres-app
+  template:
+    metadata:
+      labels:
+        app: go-postgres-app
+    spec:
+      containers:
+      - name: go-postgres-app
+        image: quay.io/rh_ee_mrudraia/go-postgres-app:v14
+        ports:
+        - containerPort: 9090
+        env:
+        - name: DB_HOST
+          value: ""
+        - name: DB_USER
+          value: "postgres"
+        - name: DB_PASSWORD
+          value: "password"
+        - name: DB_NAME
+          value: "db_postgres"       
+        resources: {}
+
+status: {}
+      
+---
+# Postgres DB deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-container
+  labels:
+    name: postgres-container
+    app: go-postgres-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: postgres-cont
+      app: go-postgres-app
+  template:
+    metadata:
+      name: postgres-cont
+      labels:
+        name: postgres-cont
+        app: go-postgres-app
+    spec:
+      containers:
+      - name: postgres
+        image: quay.io/rh_ee_mrudraia/postgres-container:v1
+        ports:
+        - containerPort: 5432
+        env:
+          - name: POSTGRES_USER
+            value: "postgres"
+          - name: POSTGRES_PASSWORD
+            value: "password"
+          - name: POSTGRES_HOST_AUTH_METHOD
+            value: trust
+
+---
+## Application Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-app-service
+  labels:
+    app: go-app-service
+spec:
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 9090
+    targetPort: 9090
+  selector:
+    app: go-app
+  
+---
+
+## Postgres Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-db
+  labels:
+    name: postgres-service
+    app: go-postgres-app
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    name: postgres-cont
+    app: go-postgres-app
+
+
+
+ 
+
