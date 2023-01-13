@@ -30,7 +30,7 @@ func Application() {
 	config := &db.Config{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("DB_PORT"),
-		Password: os.Getenv("DB_PASS"),
+		Password: os.Getenv("DB_PASSWORD"),
 		User:     os.Getenv("DB_USER"),
 		SSLMode:  os.Getenv("DB_SSLMODE"),
 		DBName:   os.Getenv("DB_NAME"),

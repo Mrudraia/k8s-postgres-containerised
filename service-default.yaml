@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  creationTimestamp: "2023-01-12T11:50:48Z"
+  name: default-view
+  resourceVersion: "48541"
+  uid: 3de5d1b7-fc0a-46dc-a37b-ddebd80c5af8
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+
+---
+
